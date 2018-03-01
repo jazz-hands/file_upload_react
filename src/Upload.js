@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 const styles = {
   form: {
@@ -12,7 +13,13 @@ const styles = {
   },
   fileInputField: {
     display: 'hidden',
+    fontSize: '16px',
+    border: '1px solid rgba(255,255,255,0.3)',
+    // color: '#fff'
   },
+  hideme: {
+    display: 'none'
+  }
 };
 
 class Upload extends Component {
@@ -21,11 +28,23 @@ class Upload extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  // async function addToMemory(file) {
+  async addToMemory(file) {
+    try {
+      const response = await axios.post('http://localhost:3000/public',file);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     for(let n=0; n<this.fileInput.files.length; n++){
       this.props.add(this.fileInput.files[n]);
+      this.addToMemory(this.fileInput.files[n]);
     }
+    this.fileInput.value=""
   }
 
   render() {
@@ -33,6 +52,7 @@ class Upload extends Component {
       <div className="Upload">
       <form onSubmit={this.handleSubmit} style={styles.form}>
       <label>Upload file:</label>
+      <br />
         <input
           multiple={true}
           style={styles.fileInputField}
@@ -41,7 +61,6 @@ class Upload extends Component {
             this.fileInput = input;
           }}
         />
-
       <br />
       <button type="submit">Submit</button>
     </form>

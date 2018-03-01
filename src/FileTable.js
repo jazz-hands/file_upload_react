@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import RaisedButton from 'material-ui/RaisedButton';
 import {
   Table,
   TableBody,
@@ -9,24 +10,31 @@ import {
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
-import TextField from 'material-ui/TextField';
-import Toggle from 'material-ui/Toggle';
-
-let files = []
 
 export default class FileTable extends Component {
+  // constructor(props) {
+  //   super(props);
+  // }
+
   state = {
     fixedHeader: true,
-    fixedFooter: true,
+    fixedFooter: false,
     stripedRows: true,
     showRowHover: false,
-    selectable: true,
-    multiSelectable: true,
-    enableSelectAll: true,
+    selectable: false,
+    multiSelectable: false,
+    enableSelectAll: false,
     deselectOnClickaway: true,
-    showCheckboxes: true,
+    showCheckboxes: false,
     height: '300px',
+    selectedRows: []
   };
+
+  selectedRows = (rows) => {
+    this.setState({
+      selectedRows: rows
+    });
+  }
 
   render() {
     return (
@@ -37,6 +45,7 @@ export default class FileTable extends Component {
           fixedFooter={this.state.fixedFooter}
           selectable={this.state.selectable}
           multiSelectable={this.state.multiSelectable}
+          onRowSelection={this.selectedRows}
         >
           <TableHeader
             displaySelectAll={this.state.showCheckboxes}
@@ -44,7 +53,7 @@ export default class FileTable extends Component {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              <TableHeaderColumn colSpan="4" style={{textAlign: 'center'}}>
+              <TableHeaderColumn colSpan="5" style={{textAlign: 'center'}}>
                 Uploaded Files
               </TableHeaderColumn>
             </TableRow>
@@ -53,6 +62,7 @@ export default class FileTable extends Component {
               <TableHeaderColumn>Size</TableHeaderColumn>
               <TableHeaderColumn>Type</TableHeaderColumn>
               <TableHeaderColumn>Last Modified</TableHeaderColumn>
+              <TableHeaderColumn>Delete</TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody
@@ -61,23 +71,17 @@ export default class FileTable extends Component {
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}
           >
-            {files.map( (row, index) => (
+            {this.props.files.files.map( (row, index) => (
               <TableRow key={index}>
                 <TableRowColumn>{row.name}</TableRowColumn>
                 <TableRowColumn>{row.size}</TableRowColumn>
                 <TableRowColumn>{row.type}</TableRowColumn>
-                <TableRowColumn>{row.lastModified}</TableRowColumn>
+                <TableRowColumn>{row.lastModifiedDate.toUTCString()}</TableRowColumn>
+                <TableRowColumn>  <RaisedButton label="Delete" primary={true} onClick={() => this.props.deleteFile(row)}/></TableRowColumn>
               </TableRow>
               ))}
           </TableBody>
-          <TableFooter
-            adjustForCheckbox={this.state.showCheckboxes}
-          >
-            <TableRow>
-              <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
-                Add Delete Button here
-              </TableRowColumn>
-            </TableRow>
+          <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
           </TableFooter>
         </Table>
       </MuiThemeProvider>

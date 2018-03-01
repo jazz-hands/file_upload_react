@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import FileTable from './FileTable.js';
 import Upload from './Upload.js';
@@ -9,31 +8,23 @@ class App extends Component {
     files: []
   };
 
-  constructor(props) {
-    super(props);
-    // this.addToFileList = this.addToFileList.bind(this)
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   addFile = (file) => {
     this.setState({
-      files: [
-        ...this.state.files,
-        ...file
-      ]
+      ...this.state.files.push(file)
     });
   }
 
-  deleteFile = (file) => {
-    //TO DO
-    // this.setState({
-    //   ...this.state,
-    //   ...file
-    // });
+  deleteFile = (e) => {
+    let files = this.state.files;
+    let index = files.indexOf(e)
+    files.splice(index, 1);
+    this.setState({files: files });
   }
 
-  updateTable = (files) => {
-    debugger
-  }
 
   render() {
     return (
@@ -42,7 +33,7 @@ class App extends Component {
           <h1 className="App-title">File Uploader</h1>
         </header>
         <Upload add={this.addFile}/>
-        <FileTable files={this.state} onChange={this.updateTable}/>
+        <FileTable files={this.state} deleteFile={this.deleteFile} onChange={this.updateTable}/>
       </div>
     );
   }
